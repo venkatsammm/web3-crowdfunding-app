@@ -18,8 +18,12 @@ async function main() {
         name,
         description,
         goal,
-        durationInDays
-    );
+        durationInDays,
+        {
+            gasLimit: 1000000,  
+            gasPrice: hre.ethers.parseUnits("10", "gwei")  
+        }
+    );    
 
     await crowdfunding.waitForDeployment();
 

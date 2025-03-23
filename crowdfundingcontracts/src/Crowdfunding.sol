@@ -20,7 +20,7 @@ contract Crowdfunding {
 
     struct Backer {
         uint256 totalContribution;
-        mapping(uint256 => bool) fundedTiers;
+        bool[] fundedTiers;
     }
 
     Tier[] public tiers;
@@ -40,26 +40,32 @@ contract Crowdfunding {
         require(!paused, "Contract is paused.");
         _;
     }
-    
+
+    event Funded(address indexed backer, uint256 tierIndex, uint256 amount);
+    event Withdrawn(address indexed owner, uint256 amount);
+    event Refunded(address indexed backer, uint256 amount);
+    event TierAdded(string name, uint256 amount);
+    event TierRemoved(uint256 index);
+
     constructor(
         address _owner,
         string memory _name,
         string memory _description,
         uint256 _goal,
-        uint256 _duratyionInDays
+        uint256 _durationInDays
     ) {
         name = _name;
         description = _description;
         goal = _goal;
-        deadline = block.timestamp + (_duratyionInDays * 1 days);
+        deadline = block.timestamp + (_durationInDays * 1 days);
         owner = _owner;
         state = CampaignState.Active;
     }
 
     function checkAndUpdateCampaignState() internal {
-        if(state == CampaignState.Active) {
-            if(block.timestamp >= deadline) {
-                state = address(this).balance >= goal ? CampaignState.Successful : CampaignState.Failed;            
+        if (state == CampaignState.Active) {
+            if (block.timestamp >= deadline) {
+                state = address(this).balance >= goal ? CampaignState.Successful : CampaignState.Failed;
             } else {
                 state = address(this).balance >= goal ? CampaignState.Successful : CampaignState.Active;
             }
@@ -72,23 +78,25 @@ contract Crowdfunding {
 
         tiers[_tierIndex].backers++;
         backers[msg.sender].totalContribution += msg.value;
-        backers[msg.sender].fundedTiers[_tierIndex] = true;
+        backers[msg.sender].fundedTiers.push(true);
 
         checkAndUpdateCampaignState();
+        emit Funded(msg.sender, _tierIndex, msg.value);
     }
 
-    function addTier(
-        string memory _name,
-        uint256 _amount
-    ) public onlyOwner {
+    function addTier(string memory _name, uint256 _amount) public onlyOwner {
         require(_amount > 0, "Amount must be greater than 0.");
         tiers.push(Tier(_name, _amount, 0));
+        emit TierAdded(_name, _amount);
     }
 
     function removeTier(uint256 _index) public onlyOwner {
         require(_index < tiers.length, "Tier does not exist.");
-        tiers[_index] = tiers[tiers.length -1];
+        for (uint256 i = _index; i < tiers.length - 1; i++) {
+            tiers[i] = tiers[i + 1];
+        }
         tiers.pop();
+        emit TierRemoved(_index);
     }
 
     function withdraw() public onlyOwner {
@@ -99,6 +107,7 @@ contract Crowdfunding {
         require(balance > 0, "No balance to withdraw");
 
         payable(owner).transfer(balance);
+        emit Withdrawn(owner, balance);
     }
 
     function getContractBalance() public view returns (uint256) {
@@ -113,14 +122,24 @@ contract Crowdfunding {
 
         backers[msg.sender].totalContribution = 0;
         payable(msg.sender).transfer(amount);
+        emit Refunded(msg.sender, amount);
     }
 
     function hasFundedTier(address _backer, uint256 _tierIndex) public view returns (bool) {
         return backers[_backer].fundedTiers[_tierIndex];
     }
 
-    function getTiers() public view returns (Tier[] memory) {
-        return tiers;
+    function getTiers() public view returns (string[] memory, uint256[] memory, uint256[] memory) {
+        string[] memory names = new string[](tiers.length);
+        uint256[] memory amounts = new uint256[](tiers.length);
+        uint256[] memory backersCount = new uint256[](tiers.length);
+
+        for (uint256 i = 0; i < tiers.length; i++) {
+            names[i] = tiers[i].name;
+            amounts[i] = tiers[i].amount;
+            backersCount[i] = tiers[i].backers;
+        }
+        return (names, amounts, backersCount);
     }
 
     function togglePause() public onlyOwner {

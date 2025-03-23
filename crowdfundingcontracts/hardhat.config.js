@@ -10,6 +10,11 @@ module.exports = {
       url: process.env.ALCHEMY_GOERLI_RPC || process.env.INFURA_GOERLI_RPC,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
+    opencampus: {
+      url: "https://rpc.open-campus-codex.gelato.digital", // OpenCampus RPC URL
+      chainId: 656476,  // The chain ID for OpenCampus
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    },
   },
   paths: {
     sources: "./src",

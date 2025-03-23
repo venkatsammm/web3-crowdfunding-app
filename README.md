@@ -1,10 +1,12 @@
 # Web3 Crowdfunding Platform
 
-## Problem Statement
+## About the Project
 Traditional crowdfunding platforms often have high fees, centralized control, and potential risks of fund mismanagement. Contributors have to trust the platform and campaign creators without transparency on how the funds are utilized.
 
-## Solution
 This Web3 Crowdfunding Platform leverages blockchain technology to provide a decentralized, transparent, and secure method for raising and managing funds. By using smart contracts, it ensures that funds are released only when predefined conditions are met, reducing risks and increasing trust between campaign creators and contributors.
+
+## Vision
+Our vision is to revolutionize crowdfunding by creating a fully decentralized, secure, and transparent fundraising ecosystem where campaign creators and contributors interact directly without intermediaries. This platform ensures fair fund distribution, builds trust, and promotes global accessibility to financial support.
 
 ## Project Description
 This project is a **decentralized crowdfunding platform** built using **Next.js for the frontend**, **Hardhat for smart contract development**, and **EduChain for deployment**. It allows users to create, contribute to, and track fundraising campaigns securely on the blockchain without intermediaries. The entire system is **gas-free**, ensuring accessibility and cost-effectiveness.
@@ -51,6 +53,17 @@ The application will be accessible at `http://localhost:3000`.
 - **EduChain** – Gas-free blockchain deployment
 - **Tailwind CSS** – UI styling
 
+## Screenshots
+![alt text](image-2.png)
+![alt text](image-1.png)
+![alt text](image.png)
+
+
+## Contract Address
+```
+0xf32f5FaAE3024a63E7ef7628fb3f910EC2B8Ed13
+```
+
 ## Future Enhancements
 - Adding social logins for easier access.
 - Multi-chain support for broader usability.
@@ -61,3 +74,4 @@ Contributions are welcome! Fork the repo, create a new branch, and submit a pull
 
 ## License
 This project is licensed under the MIT License.
+
